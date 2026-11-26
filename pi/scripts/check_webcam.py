@@ -8,6 +8,10 @@ Works on the laptop and on the Pi.
 Options:
   --index N    which camera (0 = first one). On a laptop, 0 is usually the
                built-in camera and 1 the USB webcam.
+               On the Pi 5 the camera ribbon also creates /dev/video* devices,
+               so give the webcam's path instead. Find it with:
+                   v4l2-ctl --list-devices      (look under the Logitech name)
+               then e.g.  --index /dev/video8
   --show       open a live preview window (press q to quit).
   --seconds S  how long to measure the frame rate (default 5).
 
@@ -25,10 +29,16 @@ import cv2
 PI_DIR = Path(__file__).resolve().parents[1]
 
 
-def open_camera(index: int):
-    # On Windows, the DirectShow backend opens cameras much faster.
-    backend = cv2.CAP_DSHOW if platform.system() == "Windows" else cv2.CAP_ANY
-    cap = cv2.VideoCapture(index, backend)
+def open_camera(index):
+    # index is a number ("0") or a device path ("/dev/video8").
+    source = int(index) if str(index).isdigit() else index
+    if platform.system() == "Windows":
+        backend = cv2.CAP_DSHOW  # opens cameras much faster on Windows
+    elif platform.system() == "Linux":
+        backend = cv2.CAP_V4L2   # USB webcams on the Pi
+    else:
+        backend = cv2.CAP_ANY
+    cap = cv2.VideoCapture(source, backend)
     if not cap.isOpened():
         return None
     # Ask for 1280x720 in MJPG. Cheap webcams only reach full speed at
@@ -41,7 +51,7 @@ def open_camera(index: int):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--index", type=int, default=0)
+    parser.add_argument("--index", default="0", help="camera number or device path")
     parser.add_argument("--seconds", type=float, default=5.0)
     parser.add_argument("--show", action="store_true")
     args = parser.parse_args()

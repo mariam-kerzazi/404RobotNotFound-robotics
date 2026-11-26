@@ -33,15 +33,19 @@ enum Wheel { WHEEL_FL = 0, WHEEL_FR = 1, WHEEL_RL = 2, WHEEL_RR = 3, WHEEL_COUNT
 static const bool WHEEL_INVERT[WHEEL_COUNT] = { false, false, false, false };
 
 // ---------------------------------------------------------------------------
-// Ultrasonic sensor pins — TODO: copy these from the ACEBOTT sample code.
-// We do NOT guess pin numbers. The build stops here until they are filled in.
+// Pins — ACEBOTT ESP32 Car Shield V2 (QD001 V2 kit)
+//
+// Source: ACEBOTT's ACB_SmartCar_V2 Arduino library (TX_PIN 17 / RX_PIN 16),
+// ultrasonic from ACEBOTT QD001 sample firmware (Ultrasonic.Init(13,14)) and
+// the "Ultrasonic 5V 13 14 GND" label printed on the shield.
+// Cross-checked against two independent QD001 projects.
 // ---------------------------------------------------------------------------
-#define ULTRASONIC_TRIG_PIN  -1   // TODO
-#define ULTRASONIC_ECHO_PIN  -1   // TODO
 
-// Change to 1 once the pins above (and in motor_driver.cpp) are confirmed.
-#define PINS_CONFIRMED 0
+// The V2 shield has its own motor-controller chip. The ESP32 talks to it over
+// a second serial port (Serial2) at 9600 baud. See motor_driver.cpp.
+#define MOTOR_UART_TX_PIN    17
+#define MOTOR_UART_RX_PIN    16
+#define MOTOR_UART_BAUD      9600
 
-#if !PINS_CONFIRMED
-#error "Pins not set yet: fill in config.h and motor_driver.cpp from the ACEBOTT sample code, then set PINS_CONFIRMED to 1."
-#endif
+#define ULTRASONIC_TRIG_PIN  13
+#define ULTRASONIC_ECHO_PIN  14

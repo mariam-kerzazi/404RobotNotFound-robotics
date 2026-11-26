@@ -67,12 +67,28 @@ and Hailo libraries we add later also come from apt.
 
 ### ESP32
 
-1. Install the Arduino IDE and the **esp32 by Espressif** board package.
-2. Fill in the pins in `esp32/robot_body/config.h` and `motor_driver.cpp` from the ACEBOTT sample code,
-   then set `PINS_CONFIRMED` to `1`. Until then the sketch stops on purpose with a "Pins not set yet" error.
-3. Open `esp32/robot_body/robot_body.ino` and upload it.
-4. Check it in the Serial Monitor (115200 baud, "Newline" line ending): you should see `READY` and then
-   `DIST ...` lines. Type `PING` and you should get `PONG` back.
+Pins are set for the **ACEBOTT ESP32 Car Shield V2** (QD001 V2 kit), taken from ACEBOTT's
+`ACB_SmartCar_V2` library and QD001 sample code:
+
+| What | Pins |
+|---|---|
+| Motors | Serial2 to the shield's motor chip: TX GPIO17, RX GPIO16, 9600 baud. M1 front-left, M2 rear-left, M3 front-right, M4 rear-right |
+| Ultrasonic (the car's own sensor) | Trig GPIO13, Echo GPIO14 |
+
+No extra Arduino libraries are needed.
+
+**Upload from the laptop** (unplug the ESP32's USB cable from the Pi and plug it into the laptop):
+
+```powershell
+$cli = "$env:USERPROFILE\.arduino-tools\arduino-cli.exe"
+& $cli board list                                   # find the COM port, e.g. COM5
+& $cli compile --fqbn esp32:esp32:esp32 esp32/robot_body
+& $cli upload  --fqbn esp32:esp32:esp32 -p COM5 esp32/robot_body
+& $cli monitor -p COM5 -c baudrate=115200           # expect READY, then DIST lines; type PING -> PONG
+```
+
+Or use the Arduino IDE 2: open `esp32/robot_body/robot_body.ino`, board "ESP32 Dev Module", upload,
+then Serial Monitor at 115200 with "Newline" line ending.
 
 ## Step-by-step tests on the real robot
 
@@ -89,10 +105,10 @@ Logs go to `pi/logs/robot.log`.
 
 ## Roadmap (one feature branch + PR each)
 
-1. ✅ Serial protocol + drive forward test (`feature/serial-protocol`) — motor and ultrasonic pins still to fill in
+1. ✅ Serial protocol + drive forward test (`feature/serial-protocol`) — needs testing on the robot
 2. Strafe/turn test and wheel direction check
 3. Cliff sensor (VL53L0X, pointing down)
-4. IMU (BNO055): driving straight and accurate turns
+4. IMU (BNO055), optional: driving straight and accurate turns. Off by default (`imu_enabled` in config.yaml)
 5. PIR motion sensor + LED underglow light states
 6. Person detection: camera + YOLOv8 on the Hailo AI HAT+
 7. Behavior engine (fail-safe > cliff > person > obstacle > wander)

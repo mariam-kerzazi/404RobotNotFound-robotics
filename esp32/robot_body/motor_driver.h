@@ -1,8 +1,7 @@
 // motor_driver.h — the ONLY place that knows how the shield drives motors.
 //
-// The rest of the firmware calls these two functions and never touches
-// motor pins directly. When we know the shield's wiring (from the ACEBOTT
-// sample code), only motor_driver.cpp needs to change.
+// The rest of the firmware calls these two functions and never talks to the
+// motors directly. If the shield ever changes, only motor_driver.cpp changes.
 #pragma once
 
 // Set up the motor pins. Motors must be stopped when this returns.

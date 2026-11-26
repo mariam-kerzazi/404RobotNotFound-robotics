@@ -14,6 +14,7 @@ serial:
 # GPIO numbers are BCM numbers (what gpiozero uses), not physical pin numbers.
 hardware:
   i2c_bus: 1               # physical pins 3 (SDA) and 5 (SCL)
+  imu_enabled: false       # BNO055 is optional; the robot must work without it (timed turns)
   imu_address: 0x28        # BNO055 default — confirm with: i2cdetect -y 1
   cliff_address: 0x29      # VL53L0X default — confirm with: i2cdetect -y 1
   pir_gpio: 27             # physical pin 13
@@ -21,9 +22,9 @@ hardware:
 
 camera:
   # "picamera" = Pi Camera Module v2.1 (imx219) on the ribbon cable — the main camera.
-  # "usb"      = USB webcam (e.g. Logitech), index 0 = first one found.
+  # "usb"      = the Logitech USB webcam (also plugged into the Pi).
   source: picamera
-  usb_index: 0
+  usb_device: null         # TODO: fill in from `v4l2-ctl --list-devices` on the Pi (e.g. /dev/video8)
 
 drive:
   test_speed: 0.3        # fraction of max speed used by the test scripts
