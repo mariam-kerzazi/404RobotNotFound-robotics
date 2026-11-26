@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Robot Panel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='panel.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>404RobotNotFound</h1>
+      <p class="subtitle">Robot control panel</p>
+    </div>
+    <span id="conn-pill" class="pill pill-unknown">Connecting…</span>
+  </header>
+
+  <main class="grid">
+
+    <!-- Connection ------------------------------------------------------- -->
+    <section class="card">
+      <h2>Connection</h2>
+      <form id="conn-form" class="form" autocomplete="off">
+        <label>Pi address <input id="host" value="robot1.local" spellcheck="false"></label>
+        <label>Username <input id="user" value="pi" spellcheck="false"></label>
+        <label>Password <span class="hint">(only needed if the SSH key isn't set up)</span>
+          <input id="password" type="password" placeholder="kept in memory until you close the panel">
+        </label>
+        <div class="row">
+          <button type="submit" class="primary">Connect</button>
+          <button type="button" id="forget">Forget password</button>
+        </div>
+        <p id="conn-detail" class="muted"></p>
+      </form>
+    </section>
+
+    <!-- Unit tests ------------------------------------------------------- -->
+    <section class="card">
+      <h2>Unit tests</h2>
+      <p class="muted">Runs the tests in <code>pi/tests/</code>. These use a fake ESP32, so the wheels never move.</p>
+      <div class="row">
+        <button class="primary" data-tests="laptop">Run on laptop</button>
+        <button class="primary" data-tests="pi">Run on Pi</button>
+      </div>
+      <p id="test-result" class="result"></p>
+      <pre id="test-log" class="log" aria-live="polite"></pre>
+    </section>
+
+    <!-- Status ----------------------------------------------------------- -->
+    <section class="card wide">
+      <div class="card-head">
+        <h2>Status</h2>
+        <button id="run-checks" class="primary">Run checks</button>
+      </div>
+      <ul id="checks" class="checks">
+        <li class="muted">Press “Run checks” to look at the Pi, cameras, AI HAT and ESP32.</li>
+      </ul>
+      <p id="checks-time" class="muted"></p>
+    </section>
+
+    <!-- Camera ----------------------------------------------------------- -->
+    <section class="card wide">
+      <div class="card-head">
+        <h2>Camera snapshot</h2>
+        <div class="row">
+          <select id="camera" aria-label="Camera">
+            <option value="picam">Pi Camera v2</option>
+            <option value="webcam">Logitech webcam</option>
+          </select>
+          <select id="rotate" aria-label="Rotation" title="Turn the picture if the camera is mounted sideways">
+            <option value="0">No rotation</option>
+            <option value="90">Rotate 90° ↻</option>
+            <option value="180">Rotate 180°</option>
+            <option value="270">Rotate 90° ↺</option>
+          </select>
+          <label class="check"><input id="detect" type="checkbox" checked> Find people</label>
+          <button id="snap" class="primary">Take snapshot</button>
+        </div>
+      </div>
+      <p id="snap-info" class="muted"></p>
+      <div class="photo"><img id="snap-img" alt="" hidden></div>
+    </section>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='panel.js') }}"></script>
+</body>
+</html>

@@ -91,6 +91,30 @@ $cli = "$env:USERPROFILE\.arduino-tools\arduino-cli.exe"
 Or use the Arduino IDE 2: open `esp32/robot_body/robot_body.ino`, board "ESP32 Dev Module", upload,
 then Serial Monitor at 115200 with "Newline" line ending.
 
+## Control panel (laptop)
+
+A browser dashboard that runs on the laptop and talks to the Pi over SSH.
+
+```powershell
+& $env:USERPROFILE\.venvs\robot404\Scripts\Activate.ps1
+pip install -r requirements-laptop.txt     # first time only (adds Flask + paramiko)
+python panel/panel.py                      # opens http://127.0.0.1:5050
+```
+
+- **Connection:** logs in with the laptop's SSH key. A password is only needed if the key isn't set up.
+  It's kept in memory until you close the panel (or press *Forget password*), never saved to disk.
+- **Status:** Pi online, power/undervoltage, CPU temperature, Pi camera, webcam, AI HAT, robot code
+  version on the Pi, and the ESP32 link (PING + ultrasonic). Works whether the ESP32 is plugged into
+  the laptop or the Pi.
+- **Unit tests:** runs `pi/tests` on the laptop or on the Pi, with live output.
+- **Camera snapshot:** Pi camera or webcam, optional rotation, and basic person detection (OpenCV
+  HOG on the laptop; it misses some people and sometimes boxes things that aren't people. The robot
+  itself will use the AI HAT).
+
+The panel only listens on `127.0.0.1`, so other computers on the network can't open it.
+Code: [panel/](panel/) (`panel.py` = Flask routes, `checks.py` = status checks, `pi_ssh.py` = SSH,
+`templates/` + `static/` = the page).
+
 ## Step-by-step tests on the real robot
 
 Run from the `pi/` folder on the Pi. Find the serial port with `ls -l /dev/serial/by-id/` and put it in

@@ -2,6 +2,10 @@
 # Setup instructions: see "Laptop setup" in README.md.
 -r pi/requirements.txt
 
+# Control panel (panel/panel.py)
+flask>=3.0
+paramiko>=3.4
+
 # Camera tests on the laptop (USB webcam). On the Pi use apt: python3-opencv
-opencv-python>=4.10
+opencv-python>=4.10,<5   # 5.x dropped the HOG people detector used by panel/detect.py
 numpy>=1.26
