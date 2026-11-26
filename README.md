@@ -50,20 +50,21 @@ If PowerShell refuses to run `Activate.ps1`, run once:
 To program the ESP32 from the laptop, also install the **Arduino IDE 2** (or `winget install ArduinoSA.CLI`)
 and the **CH340 USB driver** if Windows doesn't show a COM port when the ESP32 is plugged in.
 
-### Pi (Raspberry Pi OS Bookworm 64-bit)
+### Pi (`ssh pi@robot1.local`, Raspberry Pi OS "trixie" 64-bit, Python 3.13)
 
 ```bash
 sudo apt update
-sudo apt install -y git python3-serial python3-yaml python3-pytest python3-opencv i2c-tools
-sudo raspi-config nonint do_i2c 0  # turn on I2C (for the IMU and cliff sensor)
-sudo usermod -aG dialout $USER     # lets you open the serial port; log out and back in afterwards
-git clone https://github.com/mariam-kerzazi/404RobotNotFound-robotics.git
-cd 404RobotNotFound-robotics/pi
-python3 -m pytest                  # unit tests, no hardware needed
+sudo apt install -y python3-opencv i2c-tools hailo-all   # hailo-all = AI HAT+ driver + tools; reboot after
+git clone -b feature/serial-protocol https://github.com/mariam-kerzazi/404RobotNotFound-robotics.git
+python3 -m venv --system-site-packages ~/.venvs/robot404  # can still use apt packages (picamera2, Hailo, lgpio)
+~/.venvs/robot404/bin/pip install pytest
+source ~/.venvs/robot404/bin/activate
+cd 404RobotNotFound-robotics/pi && python -m pytest       # unit tests, no hardware needed
 ```
 
-We use apt packages instead of `pip install` because Bookworm blocks system-wide pip, and the camera
-and Hailo libraries we add later also come from apt.
+Already set on robot1: the `pi` user is in the `dialout`, `i2c` and `gpio` groups, and I2C is on.
+Hardware libraries (picamera2, OpenCV, Hailo, lgpio) come from apt, not pip, which is why the venv
+uses `--system-site-packages`.
 
 ### ESP32
 

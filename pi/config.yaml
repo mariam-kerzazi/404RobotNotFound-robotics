@@ -24,7 +24,8 @@ camera:
   # "picamera" = Pi Camera Module v2.1 (imx219) on the ribbon cable — the main camera.
   # "usb"      = the Logitech USB webcam (also plugged into the Pi).
   source: picamera
-  usb_device: null         # TODO: fill in from `v4l2-ctl --list-devices` on the Pi (e.g. /dev/video8)
+  # Logitech Brio 101. This by-id path stays the same across reboots (it's /dev/video8 right now).
+  usb_device: /dev/v4l/by-id/usb-046d_Brio_101_2542APPF2UX8-video-index0
 
 drive:
   test_speed: 0.3        # fraction of max speed used by the test scripts
