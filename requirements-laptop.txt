@@ -1,0 +1,7 @@
+# Everything needed to develop and test on the laptop (Windows/macOS/Linux).
+# Setup instructions: see "Laptop setup" in README.md.
+-r pi/requirements.txt
+
+# Camera tests on the laptop (USB webcam). On the Pi use apt: python3-opencv
+opencv-python>=4.10
+numpy>=1.26

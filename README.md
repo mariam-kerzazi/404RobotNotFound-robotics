@@ -31,11 +31,31 @@ pi/                       Raspberry Pi code
 
 ## Setup
 
+### Laptop (Windows)
+
+The virtual environment lives **outside** the OneDrive folder, so OneDrive doesn't try to sync
+thousands of library files.
+
+```powershell
+python -m venv $env:USERPROFILE\.venvs\robot404
+& $env:USERPROFILE\.venvs\robot404\Scripts\Activate.ps1
+pip install -r requirements-laptop.txt
+cd pi; python -m pytest            # 22 tests, no hardware needed
+python scripts/check_webcam.py --index 1 --show    # USB webcam (index 0 is usually the built-in one)
+```
+
+If PowerShell refuses to run `Activate.ps1`, run once:
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+
+To program the ESP32 from the laptop, also install the **Arduino IDE 2** (or `winget install ArduinoSA.CLI`)
+and the **CH340 USB driver** if Windows doesn't show a COM port when the ESP32 is plugged in.
+
 ### Pi (Raspberry Pi OS Bookworm 64-bit)
 
 ```bash
 sudo apt update
-sudo apt install -y git python3-serial python3-yaml python3-pytest
+sudo apt install -y git python3-serial python3-yaml python3-pytest python3-opencv i2c-tools
+sudo raspi-config nonint do_i2c 0  # turn on I2C (for the IMU and cliff sensor)
 sudo usermod -aG dialout $USER     # lets you open the serial port; log out and back in afterwards
 git clone https://github.com/mariam-kerzazi/404RobotNotFound-robotics.git
 cd 404RobotNotFound-robotics/pi
