@@ -1,0 +1,5 @@
+# On the Pi, prefer the apt packages (see README):
+#   sudo apt install -y python3-serial python3-yaml python3-pytest
+pyserial>=3.5
+PyYAML>=6.0
+pytest>=7.0

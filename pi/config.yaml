@@ -1,0 +1,18 @@
+# Robot configuration — pins, thresholds and speeds all live here.
+# Sections get added as each subsystem is built.
+
+serial:
+  # Find the right port on the Pi with:  ls -l /dev/serial/by-id/
+  # Using the /dev/serial/by-id/... path is best: it never changes between reboots.
+  port: /dev/ttyUSB0
+  baud: 115200
+  ready_timeout_s: 5.0   # how long to wait for the ESP32 to say READY after connecting
+  link_timeout_s: 0.5    # no message from the ESP32 for this long = link is dead
+  move_rate_hz: 10       # how often MOVE is repeated while driving (ESP32 stops after 300 ms of silence)
+
+drive:
+  test_speed: 0.3        # fraction of max speed used by the test scripts
+
+logging:
+  file: logs/robot.log   # relative to the pi/ folder
+  level: INFO
