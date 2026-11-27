@@ -18,11 +18,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from robot.config import load_config
 from robot.logsetup import setup_logging
+from robot.ports import find_esp32_port
 from robot.serial_link import LinkError, SerialLink
 
 
 def main() -> int:
     config = load_config()
+    config["serial"]["port"] = find_esp32_port(config["serial"]["port"])  # finds COM5 / ttyUSB0 by itself
     setup_logging(config)
 
     answer = input("Are all four wheels OFF the ground? Type y: ")

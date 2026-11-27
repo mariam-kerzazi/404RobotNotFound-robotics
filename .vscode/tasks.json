@@ -1,0 +1,46 @@
+{
+  // Terminal > Run Task...
+  "version": "2.0.0",
+  "inputs": [
+    { "id": "port", "type": "promptString", "description": "ESP32 serial port", "default": "COM5" }
+  ],
+  "options": {
+    "env": {
+      "ROBOT_PY": "${env:USERPROFILE}/.venvs/robot404/Scripts/python.exe",
+      "ARDUINO_CLI": "${env:USERPROFILE}/.arduino-tools/arduino-cli.exe"
+    },
+    "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+  },
+  "tasks": [
+    {
+      "label": "Unit tests (laptop, no hardware)",
+      "type": "shell",
+      "command": "& $env:ROBOT_PY -m pytest -v",
+      "options": { "cwd": "${workspaceFolder}/pi" },
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "ESP32: compile robot firmware",
+      "type": "shell",
+      "command": "& $env:ARDUINO_CLI compile --fqbn esp32:esp32:esp32 esp32/robot_body",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "ESP32: upload robot firmware",
+      "type": "shell",
+      "command": "& $env:ARDUINO_CLI compile --fqbn esp32:esp32:esp32 esp32/robot_body; if ($?) { & $env:ARDUINO_CLI upload --fqbn esp32:esp32:esp32 -p ${input:port} esp32/robot_body }",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "ESP32: serial monitor",
+      "type": "shell",
+      "command": "& $env:ARDUINO_CLI monitor -p ${input:port} -c baudrate=115200",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}

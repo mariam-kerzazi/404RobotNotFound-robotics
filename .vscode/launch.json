@@ -1,0 +1,44 @@
+{
+  // Run and Debug panel (Ctrl+Shift+D): pick one, then press F5.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Robot: main program",
+      "type": "debugpy", "request": "launch",
+      "program": "${workspaceFolder}/pi/main.py",
+      "cwd": "${workspaceFolder}/pi",
+      "console": "integratedTerminal", "justMyCode": true
+    },
+    {
+      "name": "Control panel (browser)",
+      "type": "debugpy", "request": "launch",
+      "program": "${workspaceFolder}/panel/panel.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal", "justMyCode": true
+    },
+    {
+      "name": "Test 1: serial ping (wheels don't move)",
+      "type": "debugpy", "request": "launch",
+      "program": "${workspaceFolder}/pi/scripts/test_01_serial_ping.py",
+      "cwd": "${workspaceFolder}/pi", "console": "integratedTerminal"
+    },
+    {
+      "name": "Test 2: drive forward 1 s (WHEELS OFF THE GROUND)",
+      "type": "debugpy", "request": "launch",
+      "program": "${workspaceFolder}/pi/scripts/test_02_drive_forward.py",
+      "cwd": "${workspaceFolder}/pi", "console": "integratedTerminal"
+    },
+    {
+      "name": "Test 3: watchdog (WHEELS OFF THE GROUND)",
+      "type": "debugpy", "request": "launch",
+      "program": "${workspaceFolder}/pi/scripts/test_03_watchdog.py",
+      "cwd": "${workspaceFolder}/pi", "console": "integratedTerminal"
+    },
+    {
+      "name": "Test 4: PIR safety lock + lights",
+      "type": "debugpy", "request": "launch",
+      "program": "${workspaceFolder}/pi/scripts/test_04_pir_lights.py",
+      "cwd": "${workspaceFolder}/pi", "console": "integratedTerminal"
+    }
+  ]
+}

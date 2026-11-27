@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # so "import robot
 
 from robot.config import load_config
 from robot.logsetup import setup_logging
+from robot.ports import find_esp32_port
 from robot.serial_link import LinkError, SerialLink
 
 UNLOCK_WAIT_S = 240   # warm-up (60 s) + quiet time (30 s), with plenty of room for motion
@@ -50,6 +51,7 @@ def main() -> int:
     args = parser.parse_args()
 
     config = load_config()
+    config["serial"]["port"] = find_esp32_port(config["serial"]["port"])  # finds COM5 / ttyUSB0 by itself
     if args.port:
         config["serial"]["port"] = args.port
     setup_logging(config)

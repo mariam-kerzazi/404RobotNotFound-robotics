@@ -1,0 +1,16 @@
+{
+  // Use the robot's virtual environment (made in the README's laptop setup).
+  "python.defaultInterpreterPath": "${env:USERPROFILE}/.venvs/robot404/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+
+  // Testing panel (beaker icon): runs pi/tests with a fake ESP32, no hardware.
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}/pi",
+  "python.testing.pytestArgs": ["tests"],
+  "python.analysis.extraPaths": ["${workspaceFolder}/pi"],
+
+  // Arduino sketches are C++.
+  "files.associations": { "*.ino": "cpp" },
+  "files.exclude": { "**/__pycache__": true, "**/.pytest_cache": true }
+}
