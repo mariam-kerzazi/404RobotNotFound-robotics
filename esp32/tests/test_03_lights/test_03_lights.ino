@@ -1,7 +1,7 @@
-// Test 3: light strip (XY-MOS MOSFET on GPIO 33) and ACEBOTT LED module (GPIO 4).
+// Test 3: light strip (XY-MOS MOSFET on GPIO 22) and ACEBOTT LED module (GPIO 21).
 // Runs the sequence below, waits 5 s, and repeats. Watch the lights and compare with the printed step.
-const int STRIP_PIN = 33;
-const int LED_PIN = 4;
+const int STRIP_PIN = 22;
+const int LED_PIN = 21;
 const int PWM_FREQ_HZ = 1000;
 const int PWM_BITS = 8;   // brightness 0-255
 
@@ -20,7 +20,7 @@ void setup() {
   ledcWrite(LED_PIN, 0);
   delay(1500);
   Serial.println();
-  Serial.println("=== Test 3: light strip (GPIO 33) and LED module (GPIO 4) ===");
+  Serial.println("=== Test 3: light strip (GPIO 22) and LED module (GPIO 21) ===");
 }
 
 void loop() {

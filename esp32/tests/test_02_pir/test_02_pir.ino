@@ -11,8 +11,8 @@ unsigned long lastChangeMs = 0;
 void setup() {
   Serial.begin(115200);
   pinMode(PIR_PIN, INPUT);
-  pinMode(4, OUTPUT); digitalWrite(4, LOW);     // keep the LED module and strip off during this test
-  pinMode(33, OUTPUT); digitalWrite(33, LOW);
+  pinMode(21, OUTPUT); digitalWrite(21, LOW);   // keep the LED and strip off during this test
+  pinMode(22, OUTPUT); digitalWrite(22, LOW);
   delay(1500);
   Serial.println();
   Serial.println("=== Test 2: PIR on GPIO 34 ===");

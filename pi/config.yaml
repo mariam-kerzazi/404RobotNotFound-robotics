@@ -11,7 +11,7 @@ serial:
   move_rate_hz: 10       # how often MOVE is repeated while driving (ESP32 stops after 300 ms of silence)
 
 # The PIR and the lights are on the ESP32, not the Pi (see esp32/robot_body/config.h):
-#   PIR GPIO 34, light strip MOSFET GPIO 33, LED module GPIO 4.
+#   PIR GPIO 34, light strip MOSFET GPIO 22, LED module GPIO 21.
 # The Pi reads them through the serial link (PIR / LOCK messages, LIGHT command).
 hardware:
   i2c_bus: 1               # Pi header physical pins 3 (SDA) and 5 (SCL), for later sensors

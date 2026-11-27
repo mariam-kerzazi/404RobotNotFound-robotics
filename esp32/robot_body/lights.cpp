@@ -5,7 +5,8 @@
 static uint8_t currentLevel = 0;
 
 void lightsBegin() {
-  // Drive both pins LOW straight away so the lights (UV stand-in) start OFF.
+  // GPIO 22 is pulled up on the shield, so until we drive it the strip turns ON.
+  // Drive both pins LOW straight away.
   pinMode(STRIP_PIN, OUTPUT); digitalWrite(STRIP_PIN, LOW);
   pinMode(LED_PIN, OUTPUT);   digitalWrite(LED_PIN, LOW);
   ledcAttach(STRIP_PIN, LIGHT_PWM_FREQ_HZ, 8);  // 8 bits = brightness 0..255
