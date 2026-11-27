@@ -10,15 +10,17 @@ serial:
   link_timeout_s: 0.5    # no message from the ESP32 for this long = link is dead
   move_rate_hz: 10       # how often MOVE is repeated while driving (ESP32 stops after 300 ms of silence)
 
-# Wiring: OPTION A — sensors wired straight to the Pi 40-pin header.
-# GPIO numbers are BCM numbers (what gpiozero uses), not physical pin numbers.
+# The PIR and the lights are on the ESP32, not the Pi (see esp32/robot_body/config.h):
+#   PIR GPIO 34, light strip MOSFET GPIO 22, LED module GPIO 21.
+# The Pi reads them through the serial link (PIR / LOCK messages, LIGHT command).
 hardware:
-  i2c_bus: 1               # physical pins 3 (SDA) and 5 (SCL)
-  imu_enabled: false       # BNO055 is optional; the robot must work without it (timed turns)
+  i2c_bus: 1               # Pi header physical pins 3 (SDA) and 5 (SCL), for later sensors
+  imu_enabled: false       # IMU is optional (dropped for now); the robot must work without it
   imu_address: 0x28        # BNO055 default — confirm with: i2cdetect -y 1
   cliff_address: 0x29      # VL53L0X default — confirm with: i2cdetect -y 1
-  pir_gpio: 27             # physical pin 13
-  lights_gpio: 17          # physical pin 11, MOSFET trigger (PWM)
+
+lights:
+  on_level: 255            # LIGHT level used when the lights (UV stand-in) are on, 0..255
 
 camera:
   # "picamera" = Pi Camera Module v2.1 (imx219) on the ribbon cable — the main camera.

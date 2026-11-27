@@ -31,6 +31,15 @@ def test_servo_range_checked():
         protocol.encode_servo(2, 200)
 
 
+def test_light_range_checked():
+    assert protocol.encode_light(0) == b"LIGHT 0\n"
+    assert protocol.encode_light(255) == b"LIGHT 255\n"
+    with pytest.raises(ValueError):
+        protocol.encode_light(256)
+    with pytest.raises(ValueError):
+        protocol.encode_light(-1)
+
+
 @pytest.mark.parametrize(
     "line, expected",
     [
@@ -42,6 +51,12 @@ def test_servo_range_checked():
         ("ERR bad_args MOVE\n", protocol.Message("ERR", text="bad_args MOVE")),
         ("READY robot_body 0.1.0\n", protocol.Message("READY", text="robot_body 0.1.0")),
         ("DIST abc\n", protocol.Message("UNKNOWN", text="DIST abc")),
+        ("PIR 1\n", protocol.Message("PIR", value=1)),
+        ("PIR -1\n", protocol.Message("PIR", value=-1)),
+        ("PIR 7\n", protocol.Message("UNKNOWN", text="PIR 7")),
+        ("LOCK 0\n", protocol.Message("LOCK", value=0)),
+        ("LOCK 1 person\n", protocol.Message("LOCK", value=1, text="person")),
+        ("LOCK 1\n", protocol.Message("UNKNOWN", text="LOCK 1")),
         ("\x00\xffets Jun  8 2016\n", protocol.Message("UNKNOWN", text="\x00\xffets Jun  8 2016")),
     ],
 )

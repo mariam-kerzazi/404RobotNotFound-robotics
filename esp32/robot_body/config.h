@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------
 // Serial link to the Raspberry Pi (see docs/protocol.md)
 // ---------------------------------------------------------------------------
-#define FIRMWARE_VERSION "0.1.0"
+#define FIRMWARE_VERSION "0.2.0"
 #define SERIAL_BAUD      115200
 #define MAX_LINE_LEN     64      // longest command line we accept
 
@@ -17,6 +17,10 @@
 
 // How often we send "DIST <cm>" to the Pi.
 #define DIST_PERIOD_MS   100
+
+// How often we repeat "PIR <state>" and "LOCK ..." so the Pi always knows them,
+// even if it connected after the last change.
+#define STATE_PERIOD_MS  1000
 
 // ---------------------------------------------------------------------------
 // Motors
@@ -49,3 +53,18 @@ static const bool WHEEL_INVERT[WHEEL_COUNT] = { false, false, false, false };
 
 #define ULTRASONIC_TRIG_PIN  13
 #define ULTRASONIC_ECHO_PIN  14
+
+// ---------------------------------------------------------------------------
+// PIR motion sensor and lights (team's wiring, 2026-11-26)
+//
+// GPIO 21/22 are the shield's I2C header. Test 1 (esp32/tests/test_01_i2c_scan)
+// found no I2C devices and ACEBOTT's library doesn't use I2C, so we use them as
+// plain outputs.
+// ---------------------------------------------------------------------------
+#define PIR_PIN              34      // HC-SR501 output (input-only pin)
+#define STRIP_PIN            22      // XY-MOS MOSFET trigger -> light strip (UV stand-in)
+#define LED_PIN              21      // ACEBOTT LED module, always follows the strip
+#define LIGHT_PWM_FREQ_HZ    1000
+
+#define PIR_WARMUP_MS        60000   // HC-SR501 needs about a minute after power-on
+#define PIR_CLEAR_MS         30000   // no motion for this long = allowed to start again

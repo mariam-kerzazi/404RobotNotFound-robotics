@@ -58,6 +58,8 @@ class SerialLink:
         self._last_rx = 0.0
         self._distance_cm: Optional[int] = None
         self._distance_time = 0.0
+        self._pir: Optional[int] = None      # -1 warming up, 0 quiet, 1 motion
+        self._lock_reason: Optional[str] = None  # None = unknown, "" = unlocked
 
         # Things worth checking in tests and logs:
         self.firmware_version: Optional[str] = None
@@ -150,6 +152,14 @@ class SerialLink:
             log.warning("Could not send STOP (%s); relying on ESP32 watchdog", e)
             return False
 
+    def light(self, level: int) -> None:
+        """Set the light strip (UV stand-in) 0..255; the LED module follows.
+
+        The ESP32 refuses anything above 0 while it is locked (PIR warming up or
+        a person seen in the last 30 s) and answers ERR locked.
+        """
+        self._send(protocol.encode_light(level))
+
     def ping(self, timeout: float = 0.5) -> Optional[float]:
         """Send PING. Returns the round-trip time in seconds, or None if no PONG."""
         self._pong.clear()
@@ -194,6 +204,20 @@ class SerialLink:
             return None, None
         return self._distance_cm, time.monotonic() - self._distance_time
 
+    def pir(self) -> Optional[int]:
+        """PIR motion sensor: 1 = motion, 0 = quiet, -1 = warming up, None = not heard yet."""
+        return self._pir
+
+    def lock_reason(self) -> Optional[str]:
+        """Why the ESP32 refuses MOVE/LIGHT: "warmup", "person", "" (not locked), or None (unknown).
+
+        Treat None like locked.
+        """
+        return self._lock_reason
+
+    def is_locked(self) -> bool:
+        return self._lock_reason != ""
+
     # ------------------------------------------------------------------
     # Internals
     # ------------------------------------------------------------------
@@ -226,6 +250,18 @@ class SerialLink:
         if msg.kind == "DIST":
             self._distance_cm = msg.value
             self._distance_time = self._last_rx
+        elif msg.kind == "PIR":
+            if msg.value != self._pir:
+                log.info("PIR %d", msg.value)
+            self._pir = msg.value
+        elif msg.kind == "LOCK":
+            reason = msg.text if msg.value == 1 else ""
+            if reason != self._lock_reason:
+                if reason:
+                    log.warning("ESP32 locked (%s): wheels stopped, lights off", reason)
+                else:
+                    log.info("ESP32 unlocked: no motion for 30 s")
+            self._lock_reason = reason
         elif msg.kind == "PONG":
             self._pong.set()
         elif msg.kind == "READY":

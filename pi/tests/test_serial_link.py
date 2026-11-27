@@ -68,3 +68,36 @@ def test_distance_and_ping():
         cm, age = link.distance()
         assert cm == 37 and age < 0.5
         assert link.ping() is not None
+
+
+def test_pir_and_lock_state_are_tracked():
+    fake = FakeEsp32()
+    with make_link(fake) as link:
+        time.sleep(0.2)
+        assert link.pir() == 0 and not link.is_locked()
+        fake.see_person()
+        time.sleep(0.2)
+        assert link.pir() == 1
+        assert link.is_locked() and link.lock_reason() == "person"
+        fake.clear()
+        time.sleep(0.2)
+        assert not link.is_locked()
+
+
+def test_locked_esp32_refuses_lights():
+    fake = FakeEsp32(lock_reason="warmup")
+    with make_link(fake) as link:
+        time.sleep(0.2)
+        assert link.is_locked()
+        link.light(200)
+        time.sleep(0.2)
+        assert fake.light_level == 0
+        assert link.last_error == "locked warmup"
+
+
+def test_lights_on_when_unlocked():
+    fake = FakeEsp32()
+    with make_link(fake) as link:
+        link.light(120)
+        time.sleep(0.2)
+        assert fake.light_level == 120

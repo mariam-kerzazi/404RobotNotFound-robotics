@@ -20,6 +20,9 @@ esp32/robot_body/         ESP32 firmware (open this folder in the Arduino IDE)
   motors.cpp                mecanum wheel math
   motor_driver.cpp          shield-specific motor code (TODO: from ACEBOTT sample code)
   ultrasonic.cpp            HC-SR04 reading
+  lights.cpp                light strip + LED module
+  safety_lock.cpp           PIR: stop everything when a person is near
+esp32/tests/              one small sketch per part (I2C scan, PIR, lights)
 pi/                       Raspberry Pi code
   config.yaml               all Pi settings
   robot/                    one module per subsystem
@@ -75,8 +78,24 @@ Pins are set for the **ACEBOTT ESP32 Car Shield V2** (QD001 V2 kit), taken from 
 |---|---|
 | Motors | Serial2 to the shield's motor chip: TX GPIO17, RX GPIO16, 9600 baud. M1 front-left, M2 rear-left, M3 front-right, M4 rear-right |
 | Ultrasonic (the car's own sensor) | Trig GPIO13, Echo GPIO14 |
+| PIR motion sensor (HC-SR501), watches behind the robot | GPIO34 (input only) |
+| Light strip (UV stand-in) via XY-MOS MOSFET | GPIO22 (I2C header, SCL column) |
+| ACEBOTT LED module (follows the strip) | GPIO21 (I2C header, SDA column) |
 
 No extra Arduino libraries are needed.
+
+**Safety lock:** if the PIR sees motion, the ESP32 itself stops the wheels and turns the lights off,
+and refuses to drive or light up until 30 s pass with no motion. It also starts locked for the PIR's
+60 s warm-up. Details in [docs/protocol.md](docs/protocol.md).
+
+**Single-part test sketches** in [esp32/tests/](esp32/tests/) (each replaces the robot firmware
+until you upload `robot_body` again):
+
+| Sketch | Checks | Pass when |
+|---|---|---|
+| `test_01_i2c_scan` | nothing else uses the I2C pins 21/22 | prints PASS (no devices) |
+| `test_02_pir` | PIR on GPIO34 | after 60 s warm-up, `PIR 1` when you wave, `PIR 0` a few seconds after you stop |
+| `test_03_lights` | strip on GPIO22, LED module on GPIO21 | strip bright, then clearly dimmer, then off; LED on, off, smooth fade |
 
 **Upload from the laptop** (unplug the ESP32's USB cable from the Pi and plug it into the laptop):
 
@@ -125,6 +144,9 @@ Run from the `pi/` folder on the Pi. Find the serial port with `ls -l /dev/seria
 | 1 | `python3 scripts/test_01_serial_ping.py` | don't move | firmware version shown, 5 PONGs, distance changes when you wave a hand |
 | 2 | `python3 scripts/test_02_drive_forward.py` | **off the ground** | all 4 wheels spin forward ~1 s, then stop |
 | 3 | `python3 scripts/test_03_watchdog.py` | **off the ground** | short twitch, `WDT` after about 300 ms |
+| 4 | `python3 scripts/test_04_pir_lights.py` | don't move | unlocks after ~90 s, lights come on, waving at the PIR turns them off and they can't be turned back on |
+
+On the laptop, add `--port COM5` to test 4.
 
 Logs go to `pi/logs/robot.log`.
 
@@ -134,7 +156,7 @@ Logs go to `pi/logs/robot.log`.
 2. Strafe/turn test and wheel direction check
 3. Cliff sensor (VL53L0X, pointing down)
 4. IMU (BNO055), optional: driving straight and accurate turns. Off by default (`imu_enabled` in config.yaml)
-5. PIR motion sensor + LED underglow light states
+5. ✅ PIR safety lock + lights (on the ESP32) — firmware 0.2.0
 6. Person detection: camera + YOLOv8 on the Hailo AI HAT+
 7. Behavior engine (fail-safe > cliff > person > obstacle > wander)
 8. Laptop override: manual drive + emergency stop over the network

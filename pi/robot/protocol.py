@@ -36,6 +36,14 @@ def encode_ping() -> bytes:
     return b"PING\n"
 
 
+def encode_light(level: int) -> bytes:
+    """Light strip brightness 0..255 (the LED module follows it). 0 = off."""
+    level = int(level)
+    if not 0 <= level <= 255:
+        raise ValueError(f"light level must be 0..255, got {level}")
+    return f"LIGHT {level}\n".encode("ascii")
+
+
 def encode_servo(servo_id: int, angle: int) -> bytes:
     if not 0 <= int(angle) <= 180:
         raise ValueError(f"servo angle must be 0..180, got {angle}")
@@ -50,11 +58,12 @@ def encode_servo(servo_id: int, angle: int) -> bytes:
 class Message:
     """One parsed line from the ESP32.
 
-    kind is one of: READY, PONG, ACK, ERR, DIST, WDT, UNKNOWN
+    kind is one of: READY, PONG, ACK, ERR, DIST, WDT, PIR, LOCK, UNKNOWN
     """
     kind: str
-    value: Optional[int] = None  # DIST: centimetres (-1 = no echo)
-    text: str = ""               # READY: version, ACK: command, ERR: code + detail, UNKNOWN: whole line
+    value: Optional[int] = None  # DIST: cm (-1 = no echo), PIR: -1/0/1, LOCK: 0/1
+    text: str = ""               # READY: version, ACK: command, ERR: code + detail,
+                                 # LOCK: reason ("warmup"/"person"), UNKNOWN: whole line
 
 
 def parse_line(line: str) -> Message:
@@ -70,4 +79,12 @@ def parse_line(line: str) -> Message:
             return Message("DIST", value=int(rest))
         except ValueError:
             pass
+    if head == "PIR" and rest in ("-1", "0", "1"):
+        return Message("PIR", value=int(rest))
+    if head == "LOCK":
+        flag, _, reason = rest.partition(" ")
+        if flag == "0" and not reason:
+            return Message("LOCK", value=0)
+        if flag == "1" and reason:
+            return Message("LOCK", value=1, text=reason)
     return Message("UNKNOWN", text=line)
