@@ -81,6 +81,12 @@ Pins are set for the **ACEBOTT ESP32 Car Shield V2** (QD001 V2 kit), taken from 
 | PIR motion sensor (HC-SR501), watches behind the robot | GPIO34 (input only) |
 | Light strip (UV stand-in) via XY-MOS MOSFET | GPIO22 (I2C header, SCL column) |
 | ACEBOTT LED module (follows the strip) | GPIO21 (I2C header, SDA column) |
+| Robot arm, 5 servos | GPIO 25, 26, 27, 33, 4 (not driven by our firmware yet) |
+| Line tracker | GPIO 35, 36, 39 |
+| Still free | IO ports GPIO12 and GPIO2 (3V3). Both are boot pins: GPIO12 must be LOW at power-on |
+
+The lights use the I2C header as plain outputs, so **no I2C device (like the IMU) can go there**:
+all three I2C rows are the same two pins. That's why the IMU is not used for now.
 
 No extra Arduino libraries are needed.
 
