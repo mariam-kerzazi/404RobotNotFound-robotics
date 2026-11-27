@@ -43,13 +43,13 @@ void setup() {
   pinMode(SCL_PIN, OUTPUT); digitalWrite(SCL_PIN, LOW);
 
   Serial.printf("Devices found: %d, bus errors: %d\n", found, errors);
-  if (found == 0) {
-    Serial.println("PASS: nothing on the I2C bus. GPIO 21/22 are free for the LED and strip.");
-  } else {
+  if (found > 0) {
     Serial.println("FAIL: the I2C bus is in use. Do NOT use GPIO 21/22 for the LED and strip.");
-  }
-  if (errors > 0) {
-    Serial.println("Note: bus errors usually mean something holds a line LOW (expected if the LED/MOSFET are plugged in).");
+  } else if (errors > 0) {
+    // Something (like the LED module) holds a line LOW, so no I2C device could answer even if present.
+    Serial.println("INCONCLUSIVE: the bus is blocked. Unplug everything from GPIO 21/22 except the I2C device and rerun.");
+  } else {
+    Serial.println("PASS: nothing on the I2C bus. GPIO 21/22 are free for the LED and strip.");
   }
 }
 
