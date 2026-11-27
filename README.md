@@ -81,7 +81,6 @@ Pins are set for the **ACEBOTT ESP32 Car Shield V2** (QD001 V2 kit), taken from 
 | PIR motion sensor (HC-SR501), watches behind the robot | GPIO34 (input only) |
 | Light strip (UV stand-in) via XY-MOS MOSFET | GPIO22 (I2C header, SCL column) |
 | ACEBOTT LED module (follows the strip) | GPIO21 (I2C header, SDA column) |
-| Blue LED on the ESP32 board: PIR status | GPIO2. Slow blink = warming up, solid = motion now, fast blink = waiting out the 30 s, short flash every 2 s = clear |
 
 No extra Arduino libraries are needed.
 
