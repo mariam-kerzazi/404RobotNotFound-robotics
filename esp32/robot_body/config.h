@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------
 // Serial link to the Raspberry Pi (see docs/protocol.md)
 // ---------------------------------------------------------------------------
-#define FIRMWARE_VERSION "0.2.0"
+#define FIRMWARE_VERSION "0.2.1"
 #define SERIAL_BAUD      115200
 #define MAX_LINE_LEN     64      // longest command line we accept
 
@@ -65,6 +65,11 @@ static const bool WHEEL_INVERT[WHEEL_COUNT] = { false, false, false, false };
 #define STRIP_PIN            22      // XY-MOS MOSFET trigger -> light strip (UV stand-in)
 #define LED_PIN              21      // ACEBOTT LED module, always follows the strip
 #define LIGHT_PWM_FREQ_HZ    1000
+
+// The ESP32 Max V1.0's blue on-board LED. Source: ACEBOTT's QA007 board page
+// (its blink and Wi-Fi examples drive "the blue indicator" on pin 2).
+// Shows the PIR state, see status_led.h.
+#define STATUS_LED_PIN       2
 
 #define PIR_WARMUP_MS        60000   // HC-SR501 needs about a minute after power-on
 #define PIR_CLEAR_MS         30000   // no motion for this long = allowed to start again

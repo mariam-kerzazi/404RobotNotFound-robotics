@@ -19,6 +19,7 @@
 #include "ultrasonic.h"
 #include "lights.h"
 #include "safety_lock.h"
+#include "status_led.h"
 
 // --- incoming line buffer ---
 static char lineBuf[MAX_LINE_LEN + 1];
@@ -222,6 +223,7 @@ void setup() {
   motorsBegin();  // and the wheels stopped
   ultrasonicBegin();
   safetyBegin();  // starts LOCKED while the PIR warms up
+  statusLedBegin();
   Serial.begin(SERIAL_BAUD);
   Serial.println("READY robot_body " FIRMWARE_VERSION);
 }
@@ -232,4 +234,5 @@ void loop() {
   checkWatchdog();
   reportDistance();
   reportState();
+  statusLedUpdate();
 }
