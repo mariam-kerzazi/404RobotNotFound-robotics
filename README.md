@@ -79,8 +79,9 @@ Pins are set for the **ACEBOTT ESP32 Car Shield V2** (QD001 V2 kit), taken from 
 | Motors | Serial2 to the shield's motor chip: TX GPIO17, RX GPIO16, 9600 baud. M1 front-left, M2 rear-left, M3 front-right, M4 rear-right |
 | Ultrasonic (the car's own sensor) | Trig GPIO13, Echo GPIO14 |
 | PIR motion sensor (HC-SR501), watches behind the robot | GPIO34 (input only) |
-| Light strip (UV stand-in) via XY-MOS MOSFET | GPIO22 (I2C header, SCL column) |
-| ACEBOTT LED module (follows the strip) | GPIO21 (I2C header, SDA column) |
+| Light strip (UV stand-in) via XY-MOS MOSFET | GPIO33 (IO port: signal on I/O, GND on GND) |
+| ACEBOTT LED module (follows the strip) | GPIO4 (IO port) |
+| I2C header (3 rows, all the same two pins) | SDA GPIO21, SCL GPIO22: kept free for the IMU |
 
 No extra Arduino libraries are needed.
 
@@ -93,9 +94,9 @@ until you upload `robot_body` again):
 
 | Sketch | Checks | Pass when |
 |---|---|---|
-| `test_01_i2c_scan` | nothing else uses the I2C pins 21/22 | prints PASS (no devices) |
+| `test_01_i2c_scan` | what is on the I2C header (GPIO 21/22) | lists the IMU address (BNO055: 0x28 or 0x29) |
 | `test_02_pir` | PIR on GPIO34 | after 60 s warm-up, `PIR 1` when you wave, `PIR 0` a few seconds after you stop |
-| `test_03_lights` | strip on GPIO22, LED module on GPIO21 | strip bright, then clearly dimmer, then off; LED on, off, smooth fade |
+| `test_03_lights` | strip on GPIO33, LED module on GPIO4 | strip bright, then clearly dimmer, then off; LED on, off, smooth fade |
 
 **Upload from the laptop** (unplug the ESP32's USB cable from the Pi and plug it into the laptop):
 

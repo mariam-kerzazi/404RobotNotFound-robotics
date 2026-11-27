@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------
 // Serial link to the Raspberry Pi (see docs/protocol.md)
 // ---------------------------------------------------------------------------
-#define FIRMWARE_VERSION "0.2.2"
+#define FIRMWARE_VERSION "0.3.0"
 #define SERIAL_BAUD      115200
 #define MAX_LINE_LEN     64      // longest command line we accept
 
@@ -57,13 +57,12 @@ static const bool WHEEL_INVERT[WHEEL_COUNT] = { false, false, false, false };
 // ---------------------------------------------------------------------------
 // PIR motion sensor and lights (team's wiring, 2026-11-26)
 //
-// GPIO 21/22 are the shield's I2C header. Test 1 (esp32/tests/test_01_i2c_scan)
-// found no I2C devices and ACEBOTT's library doesn't use I2C, so we use them as
-// plain outputs.
+// Shield IO ports (I/O, 5V, GND). GPIO 21/22 (I2C header) stay free for the IMU.
+// GPIO 12 and 2 are boot (strapping) pins, so the lights don't use them.
 // ---------------------------------------------------------------------------
 #define PIR_PIN              34      // HC-SR501 output (input-only pin)
-#define STRIP_PIN            22      // XY-MOS MOSFET trigger -> light strip (UV stand-in)
-#define LED_PIN              21      // ACEBOTT LED module, always follows the strip
+#define STRIP_PIN            33      // XY-MOS MOSFET trigger -> light strip (UV stand-in)
+#define LED_PIN              4       // ACEBOTT LED module, always follows the strip
 #define LIGHT_PWM_FREQ_HZ    1000
 
 #define PIR_WARMUP_MS        60000   // HC-SR501 needs about a minute after power-on
